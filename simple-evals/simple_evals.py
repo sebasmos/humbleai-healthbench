@@ -24,7 +24,7 @@ from .sampler.claude_sampler import ClaudeCompletionSampler, CLAUDE_SYSTEM_MESSA
 from .sampler.o_chat_completion_sampler import OChatCompletionSampler
 from .sampler.responses_sampler import ResponsesSampler
 from .simpleqa_eval import SimpleQAEval
-
+from .sampler.huggingface_sampler import HuggingFaceSampler
 
 def main():
     parser = argparse.ArgumentParser(
@@ -63,6 +63,13 @@ def main():
     args = parser.parse_args()
 
     models = {
+        # Local HuggingFace models
+        "gpt-neo-1.3b": HuggingFaceSampler(
+            model_choice="gpt-neo-1.3b",
+            system_message="You are a helpful assistant.",
+            temperature=0.7,
+            max_tokens=1024,
+        ),
         # Reasoning Models
         "o3": ResponsesSampler(
             model="o3-2025-04-16",
@@ -257,6 +264,14 @@ def main():
         max_tokens=2048,
     )
     equality_checker = ChatCompletionSampler(model="gpt-4-turbo-preview")
+    # SEB: test on GPU here 
+    local_grader = HuggingFaceSampler(
+        model_choice="gpt-neo-1.3b",
+        system_message="You are a helpful assistant.",
+        temperature=0.7,
+        max_tokens=256,
+        device="gpu",
+    )
     # ^^^ used for fuzzy matching, just for math
 
     def get_evals(eval_name, debug_mode):
@@ -301,7 +316,7 @@ def main():
                 )
             case "healthbench":
                 return HealthBenchEval(
-                    grader_model=grading_sampler,
+                    grader_model=local_grader, # SEB: was grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                     n_repeats=args.n_repeats or 1,
                     n_threads=args.n_threads or 1,
@@ -309,7 +324,7 @@ def main():
                 )
             case "healthbench_hard":
                 return HealthBenchEval(
-                    grader_model=grading_sampler,
+                    grader_model=local_grader, # SEB: was grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                     n_repeats=args.n_repeats or 1,
                     n_threads=args.n_threads or 1,
@@ -317,7 +332,7 @@ def main():
                 )
             case "healthbench_consensus":
                 return HealthBenchEval(
-                    grader_model=grading_sampler,
+                    grader_model=local_grader, # SEB: was grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                     n_repeats=args.n_repeats or 1,
                     n_threads=args.n_threads or 1,
@@ -325,7 +340,7 @@ def main():
                 )
             case "healthbench_meta":
                 return HealthBenchMetaEval(
-                    grader_model=grading_sampler,
+                    grader_model=local_grader, # SEB: was grading_sampler,
                     num_examples=10 if debug_mode else num_examples,
                     n_repeats=args.n_repeats or 1,
                     n_threads=args.n_threads or 1,
