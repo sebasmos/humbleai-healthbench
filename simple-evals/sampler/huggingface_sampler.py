@@ -2,7 +2,42 @@ import time
 from typing import Any, Optional, List, Dict
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import StoppingCriteria, StoppingCriteriaList  # NEW: stopping criteria for early stop
 from ..types import MessageList, SamplerBase, SamplerResponse
+from dataclasses import dataclass  # NEW: emulate OpenAI usage objects
+
+# NEW: OpenAI-like usage dataclasses
+@dataclass  # NEW
+class CompletionTokensDetails:  # NEW
+    accepted_prediction_tokens: int = 0  # NEW
+    audio_tokens: int = 0  # NEW
+    reasoning_tokens: int = 0  # NEW
+    rejected_prediction_tokens: int = 0  # NEW
+
+@dataclass  # NEW
+class PromptTokensDetails:  # NEW
+    audio_tokens: int = 0  # NEW
+    cached_tokens: int = 0  # NEW
+
+@dataclass  # NEW
+class CompletionUsage:  # NEW
+    completion_tokens: int  # NEW
+    prompt_tokens: int  # NEW
+    total_tokens: int  # NEW
+    completion_tokens_details: CompletionTokensDetails  # NEW
+    prompt_tokens_details: PromptTokensDetails  # NEW
+
+# NEW: stop on dialog-style tokens to avoid chatter that breaks JSON grading
+class StopOnSeqs(StoppingCriteria):  # NEW
+    def __init__(self, tokenizer, stop_strings: List[str]):  # NEW
+        self.stop_ids = [tokenizer.encode(s, add_special_tokens=False) for s in stop_strings]  # NEW
+
+    def __call__(self, input_ids, scores, **kwargs) -> bool:  # NEW
+        seq = input_ids[0].tolist()  # NEW
+        for stop in self.stop_ids:  # NEW
+            if len(seq) >= len(stop) and seq[-len(stop):] == stop:  # NEW
+                return True  # NEW
+        return False  # NEW
 
 class HuggingFaceSampler(SamplerBase):
     def __init__(
@@ -87,6 +122,26 @@ class HuggingFaceSampler(SamplerBase):
             print(f"GPU Memory: {gb:.1f} GB")
         print("Model loaded successfully.")
 
+    def _build_instruction_prompt(self, messages: MessageList) -> str:  # NEW: instruction-style fallback prompt
+        system_text = self.system_message or "You are a helpful assistant."  # NEW
+        parts: List[str] = []  # NEW
+        parts.append(  # NEW
+            "System:\n"
+            f"{system_text}\n\n"
+            "Instructions:\n"
+            "- Write a single, self-contained answer for the user.\n"
+            "- Use concise, professional Markdown.\n"
+            "- Do NOT include any dialog tags like 'Human:' or 'Assistant:'.\n"
+            "- Do NOT ask the user follow-up questions.\n"
+        )
+        user_chunks = []  # NEW
+        for msg in messages:  # NEW
+            if msg.get("role", "user") == "user":  # NEW
+                user_chunks.append(str(msg.get("content", "")).strip())  # NEW
+        question = "\n\n".join(user_chunks).strip()  # NEW
+        parts.append(f"Question:\n{question}\n\nAnswer:")  # NEW
+        return "\n".join(parts)  # NEW
+
     def _to_model_input(self, messages: MessageList) -> Dict[str, torch.Tensor]:
         text: str
         if (
@@ -100,18 +155,7 @@ class HuggingFaceSampler(SamplerBase):
                 add_generation_prompt=True,
             )
         else:
-            parts: List[str] = []
-            for msg in messages:
-                role = msg.get("role", "user")
-                content = msg.get("content", "")
-                if role == "system":
-                    parts.append(f"System: {content}\n")
-                elif role == "assistant":
-                    parts.append(f"Assistant: {content}\n")
-                else:
-                    parts.append(f"Human: {content}\n")
-            parts.append("Assistant:")
-            text = "".join(parts)
+            text = self._build_instruction_prompt(messages)  # NEW: use non-dialog instruction prompt
         inputs = self.tokenizer(
             text,
             return_tensors="pt",
@@ -131,37 +175,44 @@ class HuggingFaceSampler(SamplerBase):
                 if self.system_message:
                     effective_messages = [self._pack_message("system", self.system_message)] + effective_messages
                 inputs = self._to_model_input(effective_messages)
-                temp = max(0.0, min(1.5, float(self.temperature)))
+                temp = max(0.0, min(0.7, float(self.temperature)))  # NEW: slightly lower temperature for stability
                 do_sample = temp > 0.0
+                top_p = min(self.top_p, 0.9)  # NEW: tighten nucleus sampling
+                top_k = 0 if not do_sample else self.top_k  # NEW: deterministic when temp=0
+                stop_criteria = StoppingCriteriaList([  # NEW: stop if model drifts into dialog markers
+                    StopOnSeqs(self.tokenizer, ["\nHuman:", "\nUser:", "\nAssistant:\nHuman:", "\nAssistant:\nUser:"])
+                ])
                 with torch.no_grad():
                     outputs = self.model.generate(
                         **inputs,
                         max_new_tokens=self.max_tokens,
                         temperature=temp,
                         do_sample=do_sample,
-                        top_p=self.top_p,
-                        top_k=self.top_k,
+                        top_p=top_p,  # NEW
+                        top_k=top_k,  # NEW
                         repetition_penalty=self.repetition_penalty,
                         pad_token_id=self.tokenizer.eos_token_id,
                         eos_token_id=self.tokenizer.eos_token_id,
+                        stopping_criteria=stop_criteria,  # NEW
                     )
                 input_len = inputs["input_ids"].shape[1]
                 response_tokens = outputs[0][input_len:]
                 content = self.tokenizer.decode(response_tokens, skip_special_tokens=True).strip()
                 if not content:
                     content = "[Empty response]"
-                usage = {
-                    "prompt_tokens": int(input_len),
-                    "completion_tokens": int(response_tokens.shape[0]),
-                    "total_tokens": int(input_len + response_tokens.shape[0]),
-                }
+                prompt_tokens_val = int(input_len)  # NEW: compute prompt_tokens in ints
+                completion_tokens_val = int(response_tokens.shape[0])  # NEW: compute completion_tokens in ints
+                total_tokens_val = int(prompt_tokens_val + completion_tokens_val)  # NEW: compute total_tokens
+                usage_obj = CompletionUsage(  # NEW: build OpenAI-like CompletionUsage
+                    completion_tokens=completion_tokens_val,  # NEW
+                    prompt_tokens=prompt_tokens_val,  # NEW
+                    total_tokens=total_tokens_val,  # NEW
+                    completion_tokens_details=CompletionTokensDetails(),  # NEW
+                    prompt_tokens_details=PromptTokensDetails(),  # NEW
+                )  # NEW
                 return SamplerResponse(
                     response_text=content,
-                    response_metadata={
-                        "model": self.model_id,
-                        "device": str(self._device_str),
-                        "usage": usage,
-                    },
+                    response_metadata={"usage": usage_obj},  # NEW: only 'usage' to match expected response_dict
                     actual_queried_message_list=effective_messages,
                 )
             except torch.cuda.OutOfMemoryError as e:
@@ -171,18 +222,32 @@ class HuggingFaceSampler(SamplerBase):
                     trial += 1
                     continue
                 else:
+                    usage_obj = CompletionUsage(  # NEW: provide usage object on error
+                        completion_tokens=0,  # NEW
+                        prompt_tokens=0,  # NEW
+                        total_tokens=0,  # NEW
+                        completion_tokens_details=CompletionTokensDetails(),  # NEW
+                        prompt_tokens_details=PromptTokensDetails(),  # NEW
+                    )  # NEW
                     return SamplerResponse(
                         response_text=f"Error: {str(e)}",
-                        response_metadata={"model": self.model_id, "error": "cuda_oom"},
+                        response_metadata={"usage": usage_obj},  # NEW
                         actual_queried_message_list=effective_messages,
                     )
             except Exception as e:
                 backoff = 2 ** trial
                 print(f"Exception during generation; retry {trial} after {backoff} sec:", e)
                 if trial >= 3:
+                    usage_obj = CompletionUsage(  # NEW: provide usage object on error
+                        completion_tokens=0,  # NEW
+                        prompt_tokens=0,  # NEW
+                        total_tokens=0,  # NEW
+                        completion_tokens_details=CompletionTokensDetails(),  # NEW
+                        prompt_tokens_details=PromptTokensDetails(),  # NEW
+                    )  # NEW
                     return SamplerResponse(
                         response_text=f"Error: {str(e)}",
-                        response_metadata={"model": self.model_id, "error": str(e)},
+                        response_metadata={"usage": usage_obj},  # NEW
                         actual_queried_message_list=effective_messages,
                     )
                 time.sleep(backoff)
