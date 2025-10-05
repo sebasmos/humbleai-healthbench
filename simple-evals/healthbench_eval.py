@@ -389,7 +389,7 @@ class HealthBenchEval(Eval):
                         break
                 print("Grading failed due to bad JSON output, retrying...")
             return grading_response_dict
-
+        #TODO: review everything below
         grading_response_list = common.map_with_progress(
             grade_rubric_item,
             rubric_items,
@@ -467,6 +467,7 @@ class HealthBenchEval(Eval):
                     sampler_response.actual_queried_message_list
                 )
                 #TODO: "verify evrything below"
+                #import pdb; pdb.set_trace()
                 response_usage = response_dict.get("usage", None)
 
             metrics, readable_explanation_str, rubric_items_with_grades = (
