@@ -21,7 +21,7 @@ export ANTHROPIC_API_KEY="your-key-here"
 python -m simple-evals.simple_evals --list-models
 
 # Test with API model
-python -m simple-evals.simple_evals --model=gpt-4.1 --eval=mmlu --examples=10
+python -m simple-evals.simple_evals --model=gpt-4.1 --eval=mmlu --examples=1
 
 # Test with local model
 python -m simple-evals.simple_evals --model=gpt-neo-1.3b --eval=mmlu --examples=10
@@ -43,8 +43,9 @@ python -m simple-evals.simple_evals --model=gpt-neo-1.3b --eval=drop --examples=
 
 ```bash
 # Standard HealthBench
-python -m simple-evals.simple_evals --model=gpt-neo-1.3b --eval=healthbench --examples=10 --debug
+python -m simple-evals.simple_evals --model=gpt-neo-1.3b --eval=healthbench --examples=1
 
+python -m simple-evals.simple_evals --model=gpt-4.1 --eval=healthbench --examples=10 --debug
 # Challenging subset
 python -m simple-evals.simple_evals --model=gpt-neo-1.3b --eval=healthbench_hard --examples=5 --debug
 
