@@ -66,13 +66,13 @@ def main():
 
     models = {
         # Local HuggingFace models
-        "gpt-oss-20b": HuggingFaceSampler(
-            model_choice="openai/gpt-oss-20b",
-            #system_message="You are a helpful assistant.",
-            temperature=0.7,
-            max_tokens=1024,
-        ),
-        "gpt-neo-1.3B": HuggingFaceSampler(
+        # "gpt-oss-20b": HuggingFaceSampler(
+        #     model_choice="openai/gpt-oss-20b",
+        #     #system_message="You are a helpful assistant.",
+        #     temperature=0.7,
+        #     max_tokens=1024,
+        # ),
+        "gpt-neo-1.3b": HuggingFaceSampler(
             model_choice="EleutherAI/gpt-neo-1.3B",
             system_message=OPENAI_SYSTEM_MESSAGE_API,
             temperature=0.7,

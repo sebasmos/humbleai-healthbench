@@ -294,16 +294,37 @@ class HealthBenchEval(Eval):
             input_path = INPUT_PATH
         else:
             assert False, f"Invalid subset name: {subset_name}"
-        #with bf.BlobFile(input_path, "rb") as f:
-            #examples = [json.loads(line) for line in f]
-        response = requests.get(input_path)
-        response.raise_for_status() 
-    
-        examples = [json.loads(line) for line in response.text.strip().split('\n') if line.strip()]
+
+        # Try to read examples via blobfile first. If that fails (e.g., missing
+        # Azure credentials or container not found), attempt an HTTP GET via
+        # requests as a fallback for public containers. This provides clearer
+        # error messages and can work when the blob is publicly accessible.
+        examples = None
+        try:
+            with bf.BlobFile(input_path, "rb") as f:
+                examples = [json.loads(line) for line in f]
+        except Exception as e:
+            print(f"Warning: blobfile access failed for {input_path}: {e}")
+            print("Attempting HTTP GET fallback for the input path...")
+            try:
+                resp = requests.get(input_path, stream=True, timeout=30)
+                if resp.status_code != 200:
+                    raise RuntimeError(f"HTTP GET failed: status={resp.status_code} url={input_path}")
+                # iterate lines from the response
+                examples = [json.loads(line) for line in resp.iter_lines(decode_unicode=True) if line]
+            except Exception as e2:
+                # Re-raise a clearer exception to the caller
+                raise RuntimeError(
+                    f"Could not load HealthBench examples from {input_path}. blobfile error: {e}; HTTP fallback error: {e2}.\n"
+                    "If the container is private, please run 'az login' or set AZURE_STORAGE_KEY / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET / AZURE_TENANT_ID as appropriate."
+                )
+        # SEB: When azure credentials show an error use: 
+        # response = requests.get(input_path)
+        # response.raise_for_status() 
+        # examples = [json.loads(line) for line in response.text.strip().split('\n') if line.strip()]
         print(f"Read {len(examples)} examples from {input_path}")
         for example in examples:
             example["rubrics"] = [RubricItem.from_dict(d) for d in example["rubrics"]]
-        #import pdb; pdb.set_trace()
         print(r"data loaded")
         rng = random.Random(0)
 
@@ -375,16 +396,23 @@ class HealthBenchEval(Eval):
             convo_str = "\n\n".join(
                 [f"{m['role']}: {m['content']}" for m in convo_with_response]
             )
+            # import pdb; pdb.set_trace()
             grader_prompt = GRADER_TEMPLATE.replace(
                 "<<conversation>>", convo_str
             ).replace("<<rubric_item>>", str(rubric_item))
+            # import pdb; pdb.set_trace()
             messages: MessageList = [dict(content=grader_prompt, role="user")]
+            # import pdb; pdb.set_trace()
             while True:
                 sampler_response = self.grader_model(messages)
+                # import pdb; pdb.set_trace()
                 grading_response = sampler_response.response_text
+                # import pdb; pdb.set_trace()
                 grading_response_dict = parse_json_to_dict(grading_response)
+                import pdb; pdb.set_trace()
                 if "criteria_met" in grading_response_dict:
                     label = grading_response_dict["criteria_met"]
+                    import pdb; pdb.set_trace()
                     if label is True or label is False:
                         break
                 print("Grading failed due to bad JSON output, retrying...")
@@ -395,6 +423,7 @@ class HealthBenchEval(Eval):
             rubric_items,
             pbar=False,
         )
+        import pdb; pdb.set_trace()
 
         # compute the overall score
         overall_score = calculate_score(rubric_items, grading_response_list)
