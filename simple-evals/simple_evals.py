@@ -103,6 +103,37 @@ def main():
                 temperature=0.7,
                 max_tokens=1024,
             ),
+            # Qwen and DeepSeek Models
+            "qwen3-32b": lambda: HuggingFaceSampler(
+                model_choice="Qwen/Qwen2.5-32B-Instruct",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                temperature=0.7,
+                max_tokens=2048,
+            ),
+            "deepseek-r1-qwen-32b": lambda: HuggingFaceSampler(
+                model_choice="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                temperature=0.7,
+                max_tokens=2048,
+            ),
+            "qwen2.5-14b-instruct": lambda: HuggingFaceSampler(
+                model_choice="Qwen/Qwen2.5-14B-Instruct",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                temperature=0.7,
+                max_tokens=2048,
+            ),
+            "qwen3-30b-a3b": lambda: HuggingFaceSampler(
+                model_choice="Qwen/Qwen3-30B-A3B",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                temperature=0.7,
+                max_tokens=2048,
+            ),
+            "qwen2.5-14b": lambda: HuggingFaceSampler(
+                model_choice="Qwen/Qwen2.5-14B",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                temperature=0.7,
+                max_tokens=2048,
+            ),
             # Reasoning Models
             "o3": lambda: ResponsesSampler(
                 model="o3-2025-04-16",
@@ -279,7 +310,8 @@ def main():
     # Get list of all available models from the factory
     available_models = [
     "gpt-neo-1.3b", "gpt-oss-20b", "medgemma-4b-it", "medgemma-4b-pt", "medgemma-27b-it",
-    "medgemma-27b-text-it", "o3", "o3-temp-1", "o3_high", "o3_low",
+    "medgemma-27b-text-it", "qwen3-32b", "deepseek-r1-qwen-32b", "qwen2.5-14b-instruct",
+    "qwen3-30b-a3b", "qwen2.5-14b", "o3", "o3-temp-1", "o3_high", "o3_low",
         "o4-mini", "o4-mini_high", "o4-mini_low", "o1-pro", "o1", "o1_high", "o1_low",
         "o1-preview", "o1-mini", "o3-mini", "o3-mini_high", "o3-mini_low",
         "gpt-4.1", "gpt-4.1-temp-1", "gpt-4.1-mini", "gpt-4.1-nano",
@@ -310,6 +342,13 @@ def main():
         models = {model_name: get_model_factory(model_name)() for model_name in available_models}
 
     print(f"Running with args {args}")
+
+    # grading_sampler = ChatCompletionSampler(
+    #     model="gpt-4.1-2025-04-14",
+    #     system_message=OPENAI_SYSTEM_MESSAGE_API,
+    #     max_tokens=2048,
+    # )
+    # equality_checker = ChatCompletionSampler(model="gpt-4-turbo-preview")
 
     # Using local gpt-oss-20b model instead of expensive API calls
     grading_sampler = HuggingFaceSampler(
