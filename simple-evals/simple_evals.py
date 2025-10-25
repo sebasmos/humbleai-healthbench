@@ -357,8 +357,13 @@ def main():
     available_models = [
     "gpt-neo-1.3b", "gpt-oss-20b", "medgemma-4b-it", "medgemma-4b-pt", "medgemma-27b-it",
     "medgemma-27b-text-it", "qwen3-32b", "deepseek-r1-qwen-32b", "qwen2.5-14b-instruct",
-    "qwen3-30b-a3b", "qwen2.5-14b", "qwen3-32b-4bit", "deepseek-r1-qwen-32b-4bit",
-    "qwen2.5-14b-instruct-4bit", "qwen3-30b-a3b-4bit", "qwen2.5-14b-4bit",
+    "qwen3-30b-a3b", "qwen2.5-14b",
+    # Pre-quantized models (AWQ/GPTQ)
+    "qwen2.5-3b-instruct-awq", "qwen2.5-7b-instruct-awq", "qwen2.5-7b-instruct-gptq",
+    "qwen2.5-14b-instruct-awq", "qwen2.5-14b-instruct-gptq",
+    # Dynamic quantization models
+    "qwen2.5-14b-instruct-4bit", "qwen2.5-14b-4bit",
+    # Reasoning models
     "o3", "o3-temp-1", "o3_high", "o3_low",
         "o4-mini", "o4-mini_high", "o4-mini_low", "o1-pro", "o1", "o1_high", "o1_low",
         "o1-preview", "o1-mini", "o3-mini", "o3-mini_high", "o3-mini_low",
