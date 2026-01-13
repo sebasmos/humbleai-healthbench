@@ -197,16 +197,20 @@ python -m simple-evals.simple_evals --model=gpt-4o-mini --eval=healthbench_conse
 python -m simple-evals.simple_evals --model=gpt-4o-mini --eval=healthbench_consensus --examples=10 --use-eudeas
 ```
 
-### Benchmark Results (20 samples)
+### Benchmark Results (GPT-4o-mini, 20 samples each)
 
-| Model | Mode | HealthBench Score | EVS |
-|-------|------|------------------|-----|
-| GPT-4o-mini | **Baseline** | **88.3%** | - |
-| GPT-4o-mini | EUDEAS | 80.0% | 0.83 |
+| Benchmark | Baseline | BODHI | Improvement |
+|-----------|:--------:|:-----:|:-----------:|
+| **Consensus** | 85.8% | **87.5%** | **+1.7%** |
+| **Hard** | 7.9% | **19.6%** | **+11.7%** |
+| **General** | **28.3%** | 20.9% | -7.4% |
 
-**Current status**: EUDEAS provides EVS metrics (epistemic calibration) but doesn't yet improve accuracy. The structured PRECISE-U reasoning adds overhead. Further prompt tuning needed.
+**Key findings:**
+- **Strong gains on hard cases** - BODHI improves Hard benchmark by +11.7%
+- **Consistent improvement on consensus** - +1.7% improvement
+- **Mixed results on general** - BODHI may over-complicate straightforward queries
 
-See [Results/results.md](Results/results.md) for detailed analysis and next steps.
+See [Results/results.md](Results/results.md) for detailed case-by-case analysis.
 
 ### PRECISE-U Framework
 
