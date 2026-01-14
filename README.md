@@ -33,7 +33,7 @@ To reproduce results from a specific experiment, install the exact BODHI version
 pip install bodhi-llm==0.1.2
 
 # Or install from GitHub tag
-pip install git+https://github.com/sebasmos/bodhi-llms.git@v0.1.2
+pip install git+https://github.com/sebasmos/bodhi-llms.git@bodhi-v0.1.2
 
 # Verify installed version
 pip show bodhi-llm | grep Version
