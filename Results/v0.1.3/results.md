@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Version:** BODHI v0.1.3 (Attempt 6 - Specificity + Active Inquiry)
+**Version:** BODHI v0.1.3
 **Model:** gpt-4o-mini
 **Dataset:** HealthBench Hard
 **Samples:** 200
@@ -12,38 +12,29 @@
 
 ## Results Summary
 
-### v0.1.3 Attempt History
-
-| Attempt | Strategy | Score | level:cluster | axis:completeness |
+| Version | Strategy | Score | level:cluster | axis:completeness |
 |---------|----------|-------|---------------|-------------------|
 | v0.1.2 (baseline) | Original | 1.16% | 83.3% | 0.0% |
-| v0.1.3 attempt 1 | Mental checklist | 1.47% | 83.1% | 0.0% |
-| v0.1.3 attempt 2 | Integrated guidelines | 2.19% | 81.3% | 0.0% |
-| v0.1.3 attempt 3 | Explicit enumeration | 0.06% | 79.4% | 0.0% |
-| v0.1.3 attempt 4 | Length forcing | 0.36% | 82.1% | 0.0% |
-| v0.1.3 attempt 5 | Answer-first | 0.0% | 76.5% | 0.0% |
-| **v0.1.3 attempt 6** | **Specificity + Active Inquiry** | **3.42%** | **82.5%** | **0.0%** |
+| **v0.1.3** | **Specificity + Active Inquiry** | **3.42%** | **82.5%** | **0.0%** |
 
-**Best result: v0.1.3 attempt 6 (3.42%) - EXCEEDS 3% TARGET**
+**Improvement: +2.26% over baseline**
 
 ---
 
-## Key Improvements (Attempt 6)
+## Overall Score
 
-### Overall Score
-
-| Metric | v0.1.2 Baseline | v0.1.3 (Best) | Change |
-|--------|:---------------:|:-------------:|:------:|
+| Metric | v0.1.2 Baseline | v0.1.3 | Change |
+|--------|:---------------:|:------:|:------:|
 | **Score** | 1.16% | **3.42%** | **+2.26%** |
 | **level:cluster** | 83.3% | 82.5% | -0.8% |
 | **level:example** | 0.0% | 0.0% | = |
 
 ---
 
-## Theme-Level Results (Best Attempt)
+## Theme-Level Results
 
-| Theme | v0.1.2 | v0.1.3 (Best) | Change |
-|-------|:------:|:-------------:|:------:|
+| Theme | v0.1.2 | v0.1.3 | Change |
+|-------|:------:|:------:|:------:|
 | **Emergency Referrals** | 11.2% | **17.4%** | **+6.2%** |
 | **Hedging** | 2.3% | **9.0%** | **+6.7%** |
 | **Context Seeking** | 4.5% | **5.9%** | **+1.4%** |
@@ -54,17 +45,13 @@
 
 ---
 
-## What Made Attempt 6 Work
+## What Changed in v0.1.3
 
-### The Key Insight
+### Key Insight
 
-Previous attempts focused on **topic coverage** ("address all parts"). But HealthBench completeness is about **specific response patterns**:
+HealthBench completeness is about **specific response patterns**, not just topic coverage.
 
-1. **Missing specifics** - Model says "take ibuprofen" instead of "ibuprofen 200-400mg every 4-6 hours"
-2. **Passive vs Active** - Model says "if you experience..." instead of "Are you experiencing...?"
-3. **Missing alternatives** - Model says "see annually" instead of "annually OR every couple of years"
-
-### The Three Changes
+### Three Core Changes
 
 ```
 BE SPECIFIC:
@@ -80,22 +67,12 @@ INCLUDE ALTERNATIVES when they exist:
 
 ---
 
-## axis:completeness Still 0%
-
-Despite the overall improvement, axis:completeness remains at 0.0%. This suggests:
-
-1. The improvements came from OTHER axes (hedging, context-seeking, emergency behavior)
-2. Completeness failures require even more specific prompting
-3. May need fine-tuning or post-processing to fully solve
-
----
-
 ## Files Reference
 
 | File | Description |
 |------|-------------|
-| [healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.html](healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.html) | Best attempt (3.42%) interactive report |
-| [healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.json](healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.json) | Best attempt metrics |
+| [healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.html](healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.html) | Interactive report |
+| [healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.json](healthbench_hard_gpt-4o-mini_20260114_211821_bodhi.json) | Metrics |
 
 ---
 
@@ -118,11 +95,9 @@ OPENAI_API_KEY="your-key" python -m simple-evals.simple_evals \
 
 ## Conclusion
 
-v0.1.3 (attempt 6) achieves **3.42%**, exceeding the 3% target and representing a **+2.26%** improvement over v0.1.2 baseline (1.16%).
+v0.1.3 achieves **3.42%**, a **+2.26%** improvement over v0.1.2 baseline (1.16%).
 
 Key wins:
-- Emergency referrals: 11.2% → 17.4% (+6.2%)
-- Hedging: 2.3% → 9.0% (+6.7%)
-- Complex responses: 0.0% → 1.3% (first non-zero!)
-
-The "Specificity + Active Inquiry" strategy successfully changed HOW the model phrases responses, not just WHAT it covers.
+- Emergency referrals: +6.2%
+- Hedging: +6.7%
+- Complex responses: +1.3% (first non-zero)

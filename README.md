@@ -7,7 +7,7 @@
 
 Evaluation framework for BODHI on HealthBench - measuring epistemic humility and curiosity in medical AI. Supports both API models (OpenAI, Anthropic) and free open-source models from Hugging Face.
 
-**BODHI implementation**: [github.com/sebasmos/bodhi-llm](https://github.com/sebasmos/bodhi-llm) (`pip install bodhi-llm`)
+**BODHI implementation**: [github.com/sebasmos/bodhi-llms](https://github.com/sebasmos/bodhi-llms)
 
 ## Quick Start
 
@@ -17,29 +17,9 @@ git clone https://github.com/sebasmos/humbleai-healthbench.git
 cd humbleai-healthbench
 pip install -r requirements.txt
 
-# Install BODHI (latest version)
-pip install bodhi-llm[openai]
-
-# Or install a specific version for reproducibility
-pip install bodhi-llm[openai]==0.1.2
+# Install BODHI
+pip install bodhi-llm
 ```
-
-## Reproducibility
-
-To reproduce results from a specific experiment, install the exact BODHI version used:
-
-```bash
-# Install specific version from PyPI
-pip install bodhi-llm==0.1.2
-
-# Or install from GitHub tag
-pip install git+https://github.com/sebasmos/bodhi-llms.git@bodhi-v0.1.2
-
-# Verify installed version
-pip show bodhi-llm | grep Version
-```
-
-**Version history**: See [bodhi-llms releases](https://github.com/sebasmos/bodhi-llms/releases) for all versions and changelogs.
 
 ## Environment Variables
 
