@@ -7,7 +7,7 @@
 
 Evaluation framework for BODHI on HealthBench - measuring epistemic humility and curiosity in medical AI. Supports both API models (OpenAI, Anthropic) and free open-source models from Hugging Face.
 
-**BODHI implementation**: [github.com/sebasmos/bodhi-llms](https://github.com/sebasmos/bodhi-llms)
+📦 **Core library**: The BODHI framework is available as a separate package at [bodhi-llms](https://github.com/sebasmos/bodhi-llms)
 
 ## Quick Start
 
