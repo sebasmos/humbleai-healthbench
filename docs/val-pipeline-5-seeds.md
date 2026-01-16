@@ -73,24 +73,6 @@ Results/
     └── (same structure as RSS)
 ```
 
-## Verification
-
-After completion, the scripts automatically verify file counts. For manual verification:
-
-```bash
-# Check file counts
-for dir in Results/results-5-seeds-200*/*/; do
-    count=$(ls -1 "$dir" 2>/dev/null | wc -l)
-    echo "$dir: $count files"
-done
-
-# Check sample counts in allresults files
-for f in Results/results-5-seeds-200*/*/*_allresults.json; do
-    count=$(python -c "import json; print(len(json.load(open('$f'))['results']))" 2>/dev/null || echo "ERROR")
-    echo "$(basename $(dirname $f)): $count samples"
-done
-```
-
 ## Scripts Reference
 
 | Script | Description |
@@ -98,17 +80,3 @@ done
 | `scripts/run_rss_eval.sh` | Run RSS (stratified) evaluations |
 | `scripts/run_rs_eval.sh` | Run RS (random) evaluations |
 | `scripts/run_all_eval.sh` | Run both pipelines sequentially |
-
-## Analysis
-
-After all evaluations complete:
-
-```bash
-jupyter notebook notebooks/analyze_multi_seed_results.ipynb
-```
-
-Key metrics to compare:
-- Mean score across seeds (RSS vs RS)
-- Standard deviation across seeds
-- BODHI improvement over baseline
-- Theme-level performance variance
