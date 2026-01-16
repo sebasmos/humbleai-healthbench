@@ -10,7 +10,7 @@ EXPERIMENT CONFIGURATION
 - Total evaluations: 1000
 - Model: GPT-4o-mini
 - BODHI version: 0.1.3
-- Generated: 2026-01-16 19:42:45
+- Generated: 2026-01-16 20:05:13
 
 ================================================================================
 CONTEXT-SEEKING BEHAVIOR (PRIMARY OUTCOME)
