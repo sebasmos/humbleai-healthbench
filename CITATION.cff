@@ -4,8 +4,8 @@ type: software
 title: "BODHI: Bridging, Open, Discerning, Humble, Inquiring - Epistemic humility and curiosity for medical AI"
 version: "1.0.0"
 doi: "10.1371/journal.pdig.0001013"
-url: "https://github.com/sebasmos/HumbleAILLMs"
-repository-code: "https://github.com/sebasmos/HumbleAILLMs"
+url: "https://github.com/sebasmos/humbleai-healthbench"
+repository-code: "https://github.com/sebasmos/humbleai-healthbench"
 authors:
   - family-names: "Cajas Ordóñez"
     given-names: "Sebastián Andrés"
