@@ -17,12 +17,12 @@ set -e
 
 # Configuration
 export OPENAI_API_KEY="${OPENAI_API_KEY:?Error: Please set OPENAI_API_KEY}"
-MODEL="gpt-4o-mini"
+MODEL="${MODEL:-gpt-4o-mini}"
 EVAL="healthbench_hard"
 THREADS=10
 STRATEGY="rss"
 DATA_DIR="data/data-5-seeds-200RSS"
-RESULTS_DIR="Results/results-5-seeds-200rss"
+RESULTS_DIR="${RESULTS_DIR:-Results/results-5-seeds-200rss}"
 
 # Seeds to run (default: all 5)
 if [ $# -gt 0 ]; then

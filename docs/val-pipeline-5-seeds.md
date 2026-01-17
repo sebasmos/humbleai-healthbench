@@ -73,6 +73,40 @@ Results/
     └── (same structure as RSS)
 ```
 
+## Running with Different Models
+
+The default model is `gpt-4o-mini`. To run with a different model, set the `MODEL` environment variable:
+
+```bash
+# Run with gpt-4.1-mini
+export OPENAI_API_KEY="your-api-key-here"
+export MODEL="gpt-4.1-mini"
+export RESULTS_DIR="Results/results-5-seeds-200rss-gpt41mini"
+./scripts/run_rss_eval.sh
+```
+
+### Available Models
+
+Models must be configured in `simple-evals/simple_evals.py`. Currently supported:
+- `gpt-4o-mini` (default)
+- `gpt-4.1-mini`
+- `gpt-4.1`
+- `gpt-4.1-nano`
+- `gpt-4o`
+- And many others (see `simple_evals.py` for full list)
+
+### Adding a New Model
+
+To add a new model, edit `simple-evals/simple_evals.py` and add an entry in the models dictionary:
+
+```python
+"your-model-name": lambda: ChatCompletionSampler(
+    model="your-model-id",
+    system_message=OPENAI_SYSTEM_MESSAGE_API,
+    max_tokens=2048,
+),
+```
+
 ## Scripts Reference
 
 | Script | Description |
@@ -80,3 +114,11 @@ Results/
 | `scripts/run_rss_eval.sh` | Run RSS (stratified) evaluations |
 | `scripts/run_rs_eval.sh` | Run RS (random) evaluations |
 | `scripts/run_all_eval.sh` | Run both pipelines sequentially |
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENAI_API_KEY` | (required) | Your OpenAI API key |
+| `MODEL` | `gpt-4o-mini` | Model to evaluate |
+| `RESULTS_DIR` | `Results/results-5-seeds-200rss` | Output directory for results |

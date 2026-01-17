@@ -1,0 +1,2 @@
+Metric,n,Baseline Mean (SD),BODHI Mean (SD),Mean Diff [95% CI],Cohen's d,t-statistic,p-value,Sig.
+Overall Score,1000,-5.26% (29.94),2.14% (33.33),"+7.40pp [5.29, 9.51]",0.217,6.88,<0.0001,***

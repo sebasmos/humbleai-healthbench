@@ -447,6 +447,12 @@ def main():
                 system_message=OPENAI_SYSTEM_MESSAGE_API,
                 max_tokens=2048,
             ),
+            # GPT-5 models
+            "gpt-5-mini": lambda: ChatCompletionSampler(
+                model="gpt-5-mini",
+                system_message=OPENAI_SYSTEM_MESSAGE_API,
+                max_tokens=2048,
+            ),
             # GPT-4.5 model
             "gpt-4.5-preview": lambda: ChatCompletionSampler(
                 model="gpt-4.5-preview-2025-02-27",

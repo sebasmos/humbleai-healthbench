@@ -1,0 +1,57 @@
+{
+  "models": {
+    "GPT-4o-mini": {
+      "n": 1000,
+      "seeds": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "baseline_mean": -0.05256074604529354,
+      "bodhi_mean": 0.021441308185505943,
+      "mean_diff": 0.0740020542307995,
+      "ci_95": [
+        0.05291140399515134,
+        0.09509270446644766
+      ],
+      "t_stat": 6.877171859178077,
+      "t_pvalue": 1.074859339724436e-11,
+      "cohens_d": 0.21747526935417474
+    },
+    "GPT-4.1-mini": {
+      "n": 800,
+      "seeds": [
+        42,
+        43,
+        44,
+        45
+      ],
+      "baseline_mean": 0.03176088295774334,
+      "bodhi_mean": 0.19252104246027266,
+      "mean_diff": 0.1607601595025293,
+      "ci_95": [
+        0.13698427741189567,
+        0.18453604159316295
+      ],
+      "t_stat": 13.252501481284057,
+      "t_pvalue": 2.2201506928065193e-36,
+      "cohens_d": 0.4685466832550361
+    }
+  },
+  "generated_files": {
+    "figures": [
+      "figure1_model_comparison.png",
+      "figure2_distributions.png",
+      "figure3_effect_sizes.png",
+      "figure4_convergence.png",
+      "figure5_multi_metric_comparison.png"
+    ],
+    "tables": [
+      "table1_main_results.csv",
+      "table2_statistical_tests.csv",
+      "table3_detailed_statistics.csv"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "analysis_type": "case_level",
+    "n_observations": 1000,
+    "n_seeds": 5,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "cases_per_seed": 200,
+    "created": "2026-01-17T12:51:39.429096"
+  },
+  "descriptive_statistics": {
+    "baseline": {
+      "mean": -0.05256074604529354,
+      "std": 0.2994048193411584,
+      "mean_pct": -5.256074604529354,
+      "std_pct": 29.94048193411584
+    },
+    "bodhi": {
+      "mean": 0.021441308185505943,
+      "std": 0.3332505493929422,
+      "mean_pct": 2.1441308185505945,
+      "std_pct": 33.32505493929422
+    },
+    "difference": {
+      "mean": 0.0740020542307995,
+      "std": 0.34027802080926095,
+      "mean_pct": 7.40020542307995,
+      "se": 0.010760535834514369
+    }
+  },
+  "paired_ttest": {
+    "t_statistic": 6.877171859178077,
+    "p_value": 1.074859339724436e-11,
+    "ci_95_lower": 0.05291140399515134,
+    "ci_95_upper": 0.09509270446644766,
+    "cohens_d": 0.21747526935417474,
+    "significant_0.05": true,
+    "significant_0.01": true,
+    "significant_0.001": true
+  },
+  "mixed_effects_model": {
+    "coefficient": 0.07400205423080042,
+    "p_value": 1.7482372277678409e-07
+  },
+  "anova": {
+    "p_value": 1.9349396040804972e-07
+  }
+}
