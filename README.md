@@ -3,6 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/bodhi-llm)](https://pypi.org/project/bodhi-llm/)
 [![PLOS Digital Health](https://img.shields.io/badge/PLOS_Digital_Health-10.1371/journal.pdig.0001013-blue)](https://journals.plos.org/digitalhealth/article?id=10.1371/journal.pdig.0001013)
 [![The Lancet](https://img.shields.io/badge/The_Lancet-10.1016/S0140--6736(25)01626--5-red)](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(25)01626-5/fulltext)
+[![BMJ Health & Care Informatics](https://img.shields.io/badge/BMJ_Health_%26_Care_Informatics-e101877-green)](https://informatics.bmj.com/content/33/1/e101877)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 Evaluation framework for BODHI on HealthBench - measuring epistemic humility and curiosity in medical AI. Supports both API models (OpenAI, Anthropic) and free open-source models from Hugging Face.
@@ -135,5 +136,13 @@ Results saved to `Results/`:
   number={10505},
   pages={804--805},
   year={2025}
+}
+
+@article{arslan2026engineering,
+  title={An Engineering Framework for Curiosity-Driven and Humble AI in Clinical Decision Support},
+  author={Arslan, Janan and Benke, Kurt and Ordo{\~n}ez, Sebasti{\'a}n Andr{\'e}s Cajas and Castro, Rowell and Celi, Leo Anthony and Cruz-Suarez, Gustavo Adolfo and Reyes, Roben Delos and Engelmann, Justin and Ercole, Ari and Hilel, Almog and others},
+  journal={BMJ Health \& Care Informatics},
+  year={2026},
+  publisher={BMJ Publishing Group}
 }
 ```
